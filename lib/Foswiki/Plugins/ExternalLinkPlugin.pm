@@ -77,9 +77,12 @@ sub commonTagsHandler {
     # This is the place to define customized tags and variables
     # Called by Foswiki::handleCommonTags, after %INCLUDE:"..."%
 
-    # do custom extension rule, like for example:
+    #print STDERR "===COMMONTAGS CALLED===\n($_[0])\n\n";
+
+    #Scan for [[protocol://links][With text]]
+    # - zero length look behind negative assertion - not already part of an external link span
     $_[0] =~
-s!(\[\[($protocolsPattern://[^]]+?)\]\[[^]]+?\]\]([&]nbsp;)?)! handleExternalLink($1, $2) !ge;
+s#(?<!<span class='externalLink'>)(\[\[($protocolsPattern://[^]]+?)\]\[[^]]+?\]\]([&]nbsp;)?)# handleExternalLink($1, $2) #ge;
 }
 
 sub handleExternalLink {

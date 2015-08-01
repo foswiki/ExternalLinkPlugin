@@ -75,7 +75,6 @@ sub test_renderExternalLinks {
         )
     );
 
-return;
     # External link with text - expand called twice - Item8446
     $this->assert_html_equals(
 "<span class='externalLink'><a href='http://google.com/'>Link to Google</a></span>",
