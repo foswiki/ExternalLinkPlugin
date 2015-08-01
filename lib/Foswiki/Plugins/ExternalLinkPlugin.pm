@@ -18,8 +18,8 @@
 
 package Foswiki::Plugins::ExternalLinkPlugin;
 
-our $VERSION           = '$Rev$';
-our $RELEASE           = '1.21';
+our $VERSION           = '1.30';
+our $RELEASE           = '1.30';
 our $NO_PREFS_IN_TOPIC = 1;
 our $SHORTDESCRIPTION  = 'Adds a visual indicator to outgoing links';
 our $pluginName = 'ExternalLinkPlugin';    # Name of this Plugin
@@ -42,7 +42,6 @@ sub initPlugin {
     $addedToHead = 0;
     addStyleToHead();
 
-    # Plugin correctly initialized
     Foswiki::Func::writeDebug(
         "- Foswiki::Plugins::${pluginName}::initPlugin( $web.$topic ) is OK")
       if $Foswiki::cfg{Plugins}{ExternalLinkPlugin}{Debug};
@@ -83,21 +82,15 @@ sub commonTagsHandler {
 s!(\[\[($protocolsPattern://[^]]+?)\]\[[^]]+?\]\]([&]nbsp;)?)! handleExternalLink($1, $2) !ge;
 }
 
-sub internalLink { _internalLink(@_) }
-
-sub _internalLink {
-    my $pre = shift;
-
-    #   my( $web, $topic, $label, $anchor, $anchor, $createLink ) = @_;
-    return 'blo';
-}
-
 sub handleExternalLink {
     my ( $wholeLink, $url ) = @_;
 
-    my $scriptUrl =
-      Foswiki::Func::getUrlHost() . Foswiki::Func::getScriptUrlPath();
-    my $pubUrl = Foswiki::Func::getUrlHost() . Foswiki::Func::getPubUrlPath();
+    my $scriptUrl = "$Foswiki::cfg{DefaultUrlHost}$Foswiki::cfg{ScriptUrlPath}";
+    my $pubUrl    = "$Foswiki::cfg{DefaultUrlHost}$Foswiki::cfg{PubUrlPath}";
+
+    Foswiki::Func::writeDebug(
+        "Comparing SCRIPTURL ($scriptUrl)\n pubUrl ($pubUrl)\n with ($wholeLink)")
+      if $Foswiki::cfg{Plugins}{ExternalLinkPlugin}{Debug};
 
     if (   ( $url =~ /^$scriptUrl/ )
         || ( $url =~ /^$pubUrl/ )

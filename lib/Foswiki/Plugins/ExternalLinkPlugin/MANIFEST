@@ -1,6 +1,7 @@
-lib/Foswiki/Plugins/ExternalLinkPlugin.pm 0644 Perl module
-lib/Foswiki/Plugins/ExternalLinkPlugin/Config.spec 0444 Settings
-data/System/ExternalLinkPlugin.txt 0644 0644 Documentation
-pub/System/ExternalLinkPlugin/diagonal.gif 0777
-pub/System/ExternalLinkPlugin/external.gif 0777
-templates/externallinkplugin.tmpl 0444 Template for CSS style written to head
+data/System/ExternalLinkPlugin.txt 0664
+lib/Foswiki/Plugins/ExternalLinkPlugin.pm 0664
+lib/Foswiki/Plugins/ExternalLinkPlugin/Config.spec 0664
+pub/System/ExternalLinkPlugin/diagonal.gif 0664
+pub/System/ExternalLinkPlugin/external.gif 0664
+templates/externallinkplugin.tmpl 0664
+#test/unit/ExternalLinkPlugin/ExternalLinkPluginTests.pm 0664
