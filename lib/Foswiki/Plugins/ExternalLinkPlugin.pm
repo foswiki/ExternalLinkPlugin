@@ -94,6 +94,7 @@ sub handleExternalLink {
 
     if (   ( $url =~ /^$scriptUrl/ )
         || ( $url =~ /^$pubUrl/ )
+        || ( $url =~ /^$Foswiki::cfg{DefaultUrlHost}\// )
         || ( $wholeLink =~ /[&]nbsp;$/ ) )
     {
         return $wholeLink;

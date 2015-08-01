@@ -121,11 +121,9 @@ sub test_renderInternalLinks {
     $Foswiki::cfg{ScriptUrlPath} = '/bin';
     $this->createNewFoswikiSession();
 
-return;
-
     # External link with text  -  Fails - short URLs  Item8563
     $this->assert_html_equals(
-"<a href='$url/Main/WebHome'>$url/Main/WebHome</a>",
+"<a href='$url/Main/WebHome'>main webhome</a>",
         Foswiki::Func::renderText(
             Foswiki::Func::expandCommonVariables(
                 " [[%SCRIPTURL{view}%/Main/WebHome][main webhome]]", 'Sandbox'
