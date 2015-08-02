@@ -40,9 +40,8 @@ sub initPlugin {
         return 0;
     }
 
-
-    # Choose one.  Either the commonTagsHandler or the completePageHandler is needed
-    # not both.
+# Choose one.  Either the commonTagsHandler or the completePageHandler is needed
+# not both.
     if ( $Foswiki::cfg{Plugins}{ExternalLinkPlugin}{CheckCompletePage} ) {
         undef *commonTagsHandler;
     }
@@ -56,8 +55,8 @@ sub initPlugin {
     addStyleToHead();
 
     Foswiki::Func::writeDebug(
-        "- Foswiki::Plugins::ExternalLinkPlugin::initPlugin( $web.$topic ) is OK")
-      if $Foswiki::cfg{Plugins}{ExternalLinkPlugin}{Debug};
+"- Foswiki::Plugins::ExternalLinkPlugin::initPlugin( $web.$topic ) is OK"
+    ) if $Foswiki::cfg{Plugins}{ExternalLinkPlugin}{Debug};
     return 1;
 }
 
@@ -77,14 +76,14 @@ sub addStyleToHead {
       s/%markerimage%/$Foswiki::cfg{Plugins}{ExternalLinkPlugin}{MarkerImage}/g;
 
     if ( $Foswiki::Plugins::VERSION >= 2.1 ) {
-        # Foswiki 1.1.0 and later. 
+
+        # Foswiki 1.1.0 and later.
         Foswiki::Func::addToZone( 'head', 'EXTERNALLINKPLUGIN_CSS', $header );
     }
     else {
         # compatibility with Foswiki 1.0
         Foswiki::Func::addToHEAD( $pluginName, $header );
     }
-
 
     $addedToHead = 1;
 }
@@ -101,8 +100,8 @@ sub commonTagsHandler {
 
     #print STDERR "===COMMONTAGS CALLED===\n($_[0])\n\n";
 
-    #Scan for [[protocol://links][With text]] and [[protocol://links]] without text
-    # - zero length look behind negative assertion - not already part of an external link span
+#Scan for [[protocol://links][With text]] and [[protocol://links]] without text
+# - zero length look behind negative assertion - not already part of an external link span
     $_[0] =~
 s#(?<!<span class='externalLink'>)(\[\[($protocolsPattern://[^]]+?)\](?:\[[^]]+?\])?\]([&]nbsp;)?)# handleExternalLink($1, $2) #ge;
 
@@ -118,13 +117,13 @@ sub completePageHandler {
 sub _completePageHandler {
 ### my ( $html, $headers ) = @_;   # do not uncomment, use $_[0], $_[1]... instead
 
-    Foswiki::Func::writeDebug(
-        "- ${pluginName}::completePageHandler ")
+    Foswiki::Func::writeDebug("- ${pluginName}::completePageHandler ")
       if $Foswiki::cfg{Plugins}{ExternalLinkPlugin}{Debug};
 
-    #Scan for raw html links: <a..></a>
-    # - zero length look behind negative assertion - not already part of an external link span
-    $_[0] =~ s#(?<!<span class='externalLink'>)(<a .*?href=(["'])($protocolsPattern://.*?)\2.*?>.*?</a>)#  handleExternalLink($1, $3) #ge;
+#Scan for raw html links: <a..></a>
+# - zero length look behind negative assertion - not already part of an external link span
+    $_[0] =~
+s#(?<!<span class='externalLink'>)(<a .*?href=(["'])($protocolsPattern://.*?)\2.*?>.*?</a>)#  handleExternalLink($1, $3) #ge;
 }
 
 sub handleExternalLink {
@@ -133,13 +132,13 @@ sub handleExternalLink {
     my $scriptUrl = "$Foswiki::cfg{DefaultUrlHost}$Foswiki::cfg{ScriptUrlPath}";
     my $pubUrl    = "$Foswiki::cfg{DefaultUrlHost}$Foswiki::cfg{PubUrlPath}";
 
-    #Foswiki::Func::writeDebug(
-    #  "Comparing SCRIPTURL ($scriptUrl)\n pubUrl ($pubUrl)\n  defaultUrl ($Foswiki::cfg{DefaultUrlHost})\nwith $url ($wholeLink)" )
-    #   if $Foswiki::cfg{Plugins}{ExternalLinkPlugin}{Debug};
+#Foswiki::Func::writeDebug(
+#  "Comparing SCRIPTURL ($scriptUrl)\n pubUrl ($pubUrl)\n  defaultUrl ($Foswiki::cfg{DefaultUrlHost})\nwith $url ($wholeLink)" )
+#   if $Foswiki::cfg{Plugins}{ExternalLinkPlugin}{Debug};
 
     if (   ( $url =~ /^$scriptUrl/ )
-        || ( $url =~ /^$pubUrl/ )
-        || ( $url =~ /^$Foswiki::cfg{DefaultUrlHost}(?:\/|$)/ )
+        || ( $url       =~ /^$pubUrl/ )
+        || ( $url       =~ /^$Foswiki::cfg{DefaultUrlHost}(?:\/|$)/ )
         || ( $wholeLink =~ /[&]nbsp;$/ ) )
     {
         return $wholeLink;
