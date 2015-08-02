@@ -29,8 +29,11 @@ sub loadExtraConfig {
     $Foswiki::cfg{Plugins}{ExternalLinkPlugin}{Module} =
       'Foswiki::Plugins::ExternalLinkPlugin';
     $Foswiki::cfg{Plugins}{ExternalLinkPlugin}{Enabled} = 1;
+    $Foswiki::cfg{Plugins}{ExternalLinkPlugin}{CheckCompletePage} = 0;
 
     $Foswiki::cfg{DefaultUrlHost}='http://foobar.xxx';
+
+    # Setup for full URLs,  test later overrides to short URLs
     $Foswiki::cfg{ScriptUrlPath}='/foswiki/bin';
     $Foswiki::cfg{ScriptUrlPaths}{view} = '/foswiki/bin/view';
 }
@@ -65,9 +68,10 @@ sub test_renderExternalLinks {
         )
     );
 
-    # Simple external link, no text  (Does not get external mark)
+    # Simple external link, no text
+    # Now check for external links - detect idn collisions
     $this->assert_html_equals(
-        "<a href='http://google.com/'>http://google.com/</a>",
+        "<span class='externalLink'><a href='http://google.com/'>http://google.com/</a></span>",
         Foswiki::Func::renderText(
             Foswiki::Func::expandCommonVariables(
                 " [[http://google.com/]]", 'Sandbox'
@@ -136,8 +140,6 @@ sub test_renderI18nLinks {
     my ($this) = @_;
 
     $Foswiki::cfg{DefaultUrlHost}='http://εμπορικ.xxx';
-    $Foswiki::cfg{ScriptUrlPath}='/foswiki/bin';
-    $Foswiki::cfg{ScriptUrlPaths}{view} = '/foswiki/bin/view';
     $this->createNewFoswikiSession();
 
     my $url = $Foswiki::cfg{DefaultUrlHost};
@@ -163,6 +165,35 @@ sub test_renderI18nLinks {
         )
     );
 
+}
+
+sub test_completePageHandler {
+    my $this = shift;
+
+   my $url = $Foswiki::cfg{DefaultUrlHost};
+   my $completePage = <<"DONE";
+
+<a href='http://google.com'>google</a>
+<a href='https://google.com'>ssl google</a>
+<a href='ftp://google.com'>ftp google</a>
+<a href='$url/Main/WebHome'>internal short URL</a>
+<a href='$url'>home no trailing slash</a>
+<a href='$url/'>home trailing slash</a>
+DONE
+
+   my $expectedPage = <<"DONE";
+
+<span class='externalLink'><a href='http://google.com'>google</a></span>
+<span class='externalLink'><a href='https://google.com'>ssl google</a></span>
+<span class='externalLink'><a href='ftp://google.com'>ftp google</a></span>
+<a href='$url/Main/WebHome'>internal short URL</a>
+<a href='$url'>home no trailing slash</a>
+<a href='$url/'>home trailing slash</a>
+DONE
+
+   Foswiki::Plugins::ExternalLinkPlugin::_completePageHandler( $completePage );
+
+   $this->assert_html_equals( $expectedPage, $completePage );
 
 }
 

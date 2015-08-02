@@ -4,7 +4,7 @@
 
 This will only work for forced links marked up using the so-called double bracket syntax, like:
 <verbatim>
-[[http://external.site][an external site]]
+[[http://external.site][an external site]] and [[http://external.site]]
 </verbatim>
 
 URLs that are just written in as http://external.site are left untouched.
@@ -14,20 +14,19 @@ URLs that are just written in as http://external.site are left untouched.
 ---++ Syntax Rules
 Remember to use the double bracket link syntax.
 
-
 ---++ Plugin Settings
 Change default settings in [[%SCRIPTURL{"configure"}%/#ExternalLinkPlugin$Extensions][configure]].
 <!--
    * Set SHORTDESCRIPTION = %$SHORTDESCRIPTION%
 -->
-%TABLE{databg="#ffffff"}%
+%TABLE{databg="#ffffff" sort="off"}%
 | *Configure setting* | *Meaning* | *Default* |
 | ={<nop>MarkerImage}= | link marker image; see below for a list of images  | %PUBURL%/%SYSTEMWEB%/ExternalLinkPlugin/external.gif |
-| ={<nop>CssOnly}= | If set to =1=, does not add an image but writes CSS to the page; use if your users have modern browsers | =0= |
+| ={CheckCompletePage}=  | If set to =1=, disables the commonTagsHandler and uses a completePageHandler to check and stylize _all_ external links on the page. | =0= |
 | ={Debug}=  | If set to =1=, writes debugging info to =data/debug.txt= | =0= |
 
 ---+++ Marker images
-%TABLE{databg="#ffffff"}%
+%TABLE{databg="#ffffff" sort="off"}%
 | *Code text* | *Image* |
 | =%<nop>PUBURLPATH%/%<nop>SYSTEMWEB%/ExternalLinkPlugin/external.gif= | %PUBURL%/%SYSTEMWEB%/ExternalLinkPlugin/external.gif |
 | =%<nop>PUBURLPATH%/%<nop>SYSTEMWEB%/ExternalLinkPlugin/diagonal.gif= | %PUBURL%/%SYSTEMWEB%/ExternalLinkPlugin/diagonal.gif |
@@ -38,6 +37,17 @@ This plugin adds one CSS class:
 %TABLE{databg="#ffffff"}%
 | =.externalLink= | link class to mark outgoing links |
 
+---++ IDN Considerations
+
+International Domain Names allow use of the UNICODE character set in domain
+names. This enables a form of spoofing, where an alternate domain name is
+crafted with characters that appear like your local domain name, but lead to
+an external site.
+
+Enabling the ={CheckCompletePage}= setting will check the generated HTML for
+all links on the page, and will stylize any external link on the page with the external link
+marker.
+
 ---++ Plugin Installation Instructions
 %$INSTALL_INSTRUCTIONS%
 
@@ -47,31 +57,38 @@ To test if the plugin is correctly installed, check the following links.
 
 The links in the "If plugin enabled"-column should be marked with a marker if the plugin is functioning correctly.
 
-%TABLE{databg="#ffffff"}%
-| *Code text* | *If plugin enabled* | 
+%TABLE{databg="#ffffff" sort="off"}%
+| *Code text* | *If plugin enabled* |
 | =[<nop>[http://foswiki.org][foswiki.org]]= | [[http://foswiki.org][foswiki.org]] |
+| =[<nop>[http://foswiki.org]]= | [[http://foswiki.org]] |
 
 Unsurprisingly, local links won't be marked as being external. The following links should not be marked:
 
-%TABLE{databg="#ffffff"}%
-| *Code text* | *If plugin enabled* | 
+%TABLE{databg="#ffffff" sort="off"}%
+| *Code text* | *If plugin enabled* |
 | =[<nop>[%<nop>ATTACHURL%/bli.png][link to (nonexistent) local attachment]]= | [[%ATTACHURL%/bli.png][link to (nonexistent) local attachment]] |
+
+If you have enabled the ={CheckCompletePage}= option in the configuration, then the following html links will also be checked:
+%TABLE{databg="#ffffff" sort="off"}%
+| *Code text* | *If ={CheckCompletelPage}= enabled* |
+| =&lt;a href='http://foswiki.org'>foswiki.org&lt;/a>= | <a href='http://foswiki.org'>foswiki.org</a> |
+
+But local links will not be marked external:
+%TABLE{databg="#ffffff" sort="off"}%
+| *Code text* | *If ={CheckCompletelPage}= enabled* |
+| =&lt;a href='%PUBURL%/System/ProjectLogos/foswiki-badge.png'>logo&lt;/a>= | <a href='%PUBURL%/System/ProjectLogos/foswiki-badge.png'>logo</a> |
 
 ---++ Plugin Info
 
 |  Authors: | TWiki:Main.AurelioAHeckert, TWiki:Main.NelsonFerraz, TWiki:Main.AntonioTerceiro, Foswiki:Main.ArthurClemens |
-|  Copyright: | &copy; 2005: Aurelio A Heckert, Nelson Ferraz, Antonio Terceiro; 2006: Steffen Poulsen; 2009: Foswiki:Main.ArthurClemens |
+|  Copyright: | &copy; 2005: Aurelio A Heckert, Nelson Ferraz, Antonio Terceiro; 2006: Steffen Poulsen; 2009: Foswiki:Main.ArthurClemens, 2015: Foswiki Contributors |
 |  License: | [[http://www.gnu.org/licenses/gpl.html][GPL (Gnu General Public License)]] |
-|  Version: | %$VERSION% |
-|  Release: | %$RELEASE% |
 |  Change History: | <!-- newest on top -->&nbsp; |
+|  01 Aug 2015 | v1.30 - Foswikitask:Item8446: Don't nest externalLink spans<br />\
+                         Foswikitask:Item8563: Recognize short URLs as internal links.<br />\
+                         Foswikitask:Item13590: Update for Foswiki 2.0, test with utf-8 international links.  Check [<nop[...]] forced links to detect idn based spoofing attacks. Add optional =completePageHandler= to process all html links. |
 |  31 Dec 2009 | v1.21 - fixed closing css declaration. |
 |  02 Oct 2009 | v1.20 - Ported to Foswiki; changed =img= HTML tag to CSS style; moved plugin settings to Configure.  |
 |  24 Apr 2006 | v1.11 - =%<nop>TOPIC% removed from =MARK= definition, wasn't expanded correctly. |
 |  23 Apr 2006 | v1.10 - Incorporated patch from TWiki:Main.TobiasRoeser (only mark external link once in an included scenario). Minor doc brush-up. Changed default marker to =external.gif= graphic. (TWiki:Main.SteffenPoulsen). |
 |  02 Nov 2005 | v1.00 - Initial release |
-|  CPAN Dependencies: | none |
-|  Other Dependencies: | none |
-|  Perl Version: | 5.005 |
-|  Plugin Home: | http://foswiki.org/Extensions/%TOPIC% |
-|  Support: | http://foswiki.org/Support/%TOPIC% |
